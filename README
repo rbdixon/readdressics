@@ -1,0 +1,34 @@
+I forward my work email to my personal GMail account so that I can use
+Google Calendar. For some reason meeting invitations are not automatically
+added to my Google Calendar unless:
+
+ * They are addressed via the To: line to my GMail address.
+ * The ICS attachment reference my GMail address, not my work address.
+ * The ICS attachment must be text/calendar, 8bit encoded, named meeting.ics
+
+I've toyed with the secondary email address option on my Google
+Account. Doesn't work.
+
+This is a simple utility that parses a MIME email message with an ICS
+attachment, substitutes my GMail address, formats the message back into
+MIME with the proper attachment settings, and prints it to STDOUT.
+
+I use it as part of my procmail script:
+
+--
+
+:0 HBc
+*^TObdixon
+* text/calendar
+| $TOGMAIL $MVADDR $GMAILADDR | $SENDMAIL -oi -t
+
+:0 a
+$STORE_CALENDAR
+
+--
+
+That means:
+
+1) Parse the header and body for emails addressed to bdixon.
+2) and with the string "text/calendar" to crudely search for ICS attachments
+3) and then filter the message through the script and then pass to sendmail.
